@@ -1,0 +1,49 @@
+package example
+
+import org.apache.spark.sql.{SQLContext, DataFrame}
+
+/**
+ * Created by jianshuang on 3/11/15.
+ */
+object Example {
+
+  case class RandomRow(id: String, timestamp: java.sql.Timestamp, value: Double, tag: Int, comment: String) {
+    def this(id: String) = {
+      this(
+        id,
+        new java.sql.Timestamp(System.currentTimeMillis()),
+        (math.random * 100).round / 100.0,
+        randomInt(1, 5),
+        ""
+      )
+    }
+  }
+
+  /**
+   * Generates random dataset
+   * Uses {@link RandomRow}
+   *
+   * @param nrows   number of rows
+   *
+   * @return a DataFrame
+   */
+  def randomDataset(nrows: Int)(implicit sqlc: SQLContext): DataFrame = {
+    val data = 0.until(nrows).map(i => new RandomRow(i.toString))
+    sqlc.createDataFrame(sqlc.sparkContext.parallelize(data))
+  }
+
+  /**
+   * Generates pseudo-random integer from specific range. Generated number is
+   * great or equals to min parameter value and less then max parameter value.
+   * Uses {@link Math#random()}.
+   *
+   * @param min    lower (inclusive) boundary
+   * @param max    higher (exclusive) boundary
+   *
+   * @return pseudo-random value
+   */
+  def randomInt (min: Int, max: Int): Int = {
+    min + (math.random * (max - min)).toInt
+  }
+
+}

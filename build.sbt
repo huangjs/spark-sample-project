@@ -4,7 +4,7 @@
 scalaVersion := "2.11.6"
 
 // force scalaVersion
-ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
+//ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 sparkVersion := "1.3.0-rc2"
 
@@ -17,11 +17,14 @@ version := "0.1.0-SNAPSHOT"
 // All Spark Packages need a license
 licenses := Seq("Apache-2.0" -> url("http://opensource.org/licenses/Apache-2.0"))
 
+// Needed as SBT's classloader doesn't work well with Spark
+fork := true
+
 // Java version
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
 
 // add a JVM option to use when forking a JVM for 'run'
-javaOptions ++= Seq("-Xmx1G")
+javaOptions ++= Seq("-Xmx2G")
 
 // append -deprecation to the options passed to the Scala compiler
 scalacOptions ++= Seq("-deprecation", "-unchecked")
@@ -64,7 +67,7 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
 // testing
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 
-//libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.2" % "test"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.2" % "test"
 
 
 /// Compiler plugins
