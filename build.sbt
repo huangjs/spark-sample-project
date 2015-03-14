@@ -1,21 +1,22 @@
 // Your sbt build file. Guides on how to write one can be found at
 // http://www.scala-sbt.org/0.13/docs/index.html
 
-scalaVersion := "2.11.6"
-
-// force scalaVersion
-//ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
-
-sparkVersion := "1.3.0-rc2"
-
-// Change org name and project name
-sparkPackageName := "organization/spark-sample-project"
+// Project name
+name := "spark-sample-project"
 
 // Don't forget to set the version
 version := "0.1.0-SNAPSHOT"
 
 // All Spark Packages need a license
 licenses := Seq("Apache-2.0" -> url("http://opensource.org/licenses/Apache-2.0"))
+
+// scala version to be used
+scalaVersion := "2.11.6"
+// force scalaVersion
+//ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
+
+// spark version to be used
+val sparkVersion = "1.3.0-rc2"
 
 // Needed as SBT's classloader doesn't work well with Spark
 fork := true
@@ -40,16 +41,6 @@ resolvers ++= Seq(
   )
 
 
-// Add Spark components this package depends on, e.g, "mllib", ....
-sparkComponents ++= Seq("sql", "mllib")
-
-// uncomment and change the value below to change the directory where your zip artifact will be created
-// spDistDirectory := target.value
-
-// add any sparkPackageDependencies using sparkPackageDependencies.
-// e.g. sparkPackageDependencies += "databricks/spark-avro:0.1"
-
-
 /// Dependencies
 
 // scala modules (should be included by spark, just an exmaple)
@@ -59,7 +50,11 @@ sparkComponents ++= Seq("sql", "mllib")
 //  )
 
 // spark modules (should be included by spark-sql, just an example)
-//libraryDependencies += "org.apache.spark" %% "spark-catalyst" % sparkVersion.value % "provided"
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
+  "org.apache.spark" %% "spark-sql" % sparkVersion % "provided",
+  "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"
+)
 
 // logging
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
@@ -82,15 +77,33 @@ addCompilerPlugin("com.foursquare.lint" %% "linter" % "0.1.8")
 
 // define the statements initially evaluated when entering 'console', 'consoleQuick', or 'consoleProject'
 // but still keep the console settings in the sbt-spark-package plugin
-initialCommands in console += """
+
+val sparkMode = "local[2]"
+
+// use yarn-client if you want to test in YARN
+//val sparkMode = "yarn-client"
+
+initialCommands in console :=
+  s"""
+    |import org.apache.spark.SparkConf
+    |import org.apache.spark.SparkContext
+    |import org.apache.spark.SparkContext._
+    |
+    |@transient val sc = new SparkContext(
+    |  new SparkConf()
+    |    .setMaster("$sparkMode")
+    |    .setAppName("Console test"))
+    |implicit def sparkContext = sc
+    |import sc._
+    |
+    |@transient val sqlc = new org.apache.spark.sql.SQLContext(sc)
+    |implicit def sqlContext = sqlc
+    |import sqlc._
+    |
     |def time[T](f: => T): T = {
     |  import System.{currentTimeMillis => now}
     |  val start = now
     |  try { f } finally { println("Elapsed: " + (now - start)/1000.0 + " s") }
     |}
-    |
-    |@transient val sqlc = new org.apache.spark.sql.SQLContext(sc)
-    |implicit def sqlContext = sqlc
-    |import sqlc._
     |
     |""".stripMargin
