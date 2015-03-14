@@ -16,7 +16,7 @@ scalaVersion := "2.11.6"
 //ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 // spark version to be used
-val sparkVersion = "1.3.0-rc2"
+val sparkVersion = "1.3.0"
 
 // Needed as SBT's classloader doesn't work well with Spark
 fork := true
