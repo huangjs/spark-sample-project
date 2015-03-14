@@ -49,11 +49,13 @@ resolvers ++= Seq(
 //  "org.scala-lang" % "scala-compiler" % scalaVersion.value
 //  )
 
+val sparkDependencyScope = "provided"
+
 // spark modules (should be included by spark-sql, just an example)
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
-  "org.apache.spark" %% "spark-sql" % sparkVersion % "provided",
-  "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"
+  "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope,
+  "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope,
+  "org.apache.spark" %% "spark-mllib" % sparkVersion % sparkDependencyScope
 )
 
 // logging
@@ -107,3 +109,8 @@ initialCommands in console :=
     |}
     |
     |""".stripMargin
+
+cleanupCommands in console :=
+  s"""
+     |sc.stop()
+   """.stripMargin
