@@ -35,6 +35,14 @@ Open target/scalastyle-result.xml
 
 Check level are all "warn", change to "error" if you want to reject code changes when integrated with CI tools.
 
+## Issues
+
+### fork limitation in sbt console
+
+Currently Test and run will fork a JVM. The reason it's necessary is that SBT's classloader doesn't work well with Spark and Spark shell.
+
+However `sbt console` does not recognize fork key right now. It might throw ScalaReflectionException, etc.
+
 ## Author
 
 - Jianshi Huang (jianshuang@paypal.com; jianshi.huang@gmail.com)
