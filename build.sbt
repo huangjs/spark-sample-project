@@ -46,6 +46,9 @@ resolvers ++= Seq(
 
 /// Dependencies
 
+// copy all dependencies into lib_managed/
+//retrieveManaged := true
+
 // scala modules (should be included by spark, just an exmaple)
 //libraryDependencies ++= Seq(
 //  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
