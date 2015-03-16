@@ -1,8 +1,12 @@
 package example
 
+import java.sql.Timestamp
+
 import org.apache.spark.sql.test._
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen._
+import org.scalacheck.Prop.{exists, forAll}
 import org.scalatest.FunSuite
-import org.scalacheck.Prop.{forAll, exists}
 import org.scalatest.prop.Checkers._
 
 /**
@@ -10,12 +14,13 @@ import org.scalatest.prop.Checkers._
  */
 class ExampleTest extends FunSuite {
 
-  import Example._
+  import example.Example._
+
   implicit def sqlc = TestSQLContext
 
   test("randomDataset has correct #rows") {
     val d = randomDataset(10)
-    d.collect().foreach(println)
+//    d.collect().foreach(println)
 
     assert(d.collect().size === 10)
     assert(randomDataset(0).collect().size === 0)
@@ -39,6 +44,21 @@ class ExampleTest extends FunSuite {
 
     check(propInclusiveFrom)
     check(propExclusiveTo)
+  }
+
+  val datasetGen =
+    for (
+      id <- arbitrary[String];
+      ts <- choose(0L, System.currentTimeMillis());
+      v <- arbitrary[Double];
+      tag <- choose(1, 4)
+    ) yield RandomRow(id, new Timestamp(ts), v, tag, "")
+
+  test("tag range is in range") {
+    check(
+      forAll(datasetGen) { d =>
+        d.tag >= 1 && d.tag < 5
+      })
   }
 
 }

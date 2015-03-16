@@ -21,6 +21,9 @@ val sparkVersion = "1.3.0"
 // Needed as SBT's classloader doesn't work well with Spark
 fork := true
 
+// BUG: unfortunately, it's not supported right now
+fork in console := true
+
 // Java version
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
 
@@ -35,7 +38,7 @@ resolvers ++= Seq(
   Resolver.defaultLocal,
   Resolver.mavenLocal,
   // For Typesafe goodies, if not available through maven
-  //"Typesafe" at "http://repo.typesafe.com/typesafe/releases",
+  // "Typesafe" at "http://repo.typesafe.com/typesafe/releases",
   // For Spark development versions, if you don't want to build spark yourself
   "Apache Staging" at "https://repository.apache.org/content/repositories/staging/"
   )
@@ -55,7 +58,8 @@ val sparkDependencyScope = "provided"
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope,
   "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope,
-  "org.apache.spark" %% "spark-mllib" % sparkVersion % sparkDependencyScope
+  "org.apache.spark" %% "spark-mllib" % sparkVersion % sparkDependencyScope,
+  "org.apache.spark" %% "spark-streaming" % sparkVersion % sparkDependencyScope
 )
 
 // logging
