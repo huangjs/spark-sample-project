@@ -37,6 +37,8 @@ scalacOptions ++= Seq("-deprecation", "-unchecked")
 resolvers ++= Seq(
   Resolver.defaultLocal,
   Resolver.mavenLocal,
+  // make sure default maven local repository is added... Resolver.mavenLocal has bugs.
+  "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
   // For Typesafe goodies, if not available through maven
   // "Typesafe" at "http://repo.typesafe.com/typesafe/releases",
   // For Spark development versions, if you don't want to build spark yourself
