@@ -20,12 +20,9 @@ object Example {
   }
 
   /**
-   * Generates random dataset
-   * Uses {@link RandomRow}
+   * Returns a random dataset of [[RandomRow]]
    *
    * @param nrows   number of rows
-   *
-   * @return a DataFrame
    */
   def randomDataset(nrows: Int)(implicit sqlc: SQLContext): DataFrame = {
     val data = 0.until(nrows).map(i => new RandomRow(i.toString))
@@ -33,14 +30,13 @@ object Example {
   }
 
   /**
-   * Generates pseudo-random integer from specific range. Generated number is
-   * great or equals to min parameter value and less then max parameter value.
-   * Uses {@link Math#random()}.
+   * Returns pseudo-random integer from specific range.
+   *
+   * Generated number is great or equals to min parameter value and less then max parameter value.
+   * Uses [[scala.math.random]]
    *
    * @param min    lower (inclusive) boundary
    * @param max    higher (exclusive) boundary
-   *
-   * @return pseudo-random value
    */
   def randomInt (min: Int, max: Int): Int = {
     min + (math.random * (max - min)).toInt

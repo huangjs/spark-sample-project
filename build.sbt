@@ -89,10 +89,10 @@ addCompilerPlugin("com.foursquare.lint" %% "linter" % "0.1.8")
 // define the statements initially evaluated when entering 'console', 'consoleQuick', or 'consoleProject'
 // but still keep the console settings in the sbt-spark-package plugin
 
-val sparkMode = "local[2]"
+// If you want to use yarn-client for spark cluster mode, override the environment variable
+// SPARK_MODE=yarn-client <cmd>
+val sparkMode = sys.env.getOrElse("SPARK_MODE", "local[2]")
 
-// use yarn-client if you want to test in YARN
-//val sparkMode = "yarn-client"
 
 initialCommands in console :=
   s"""
@@ -123,3 +123,15 @@ cleanupCommands in console :=
   s"""
      |sc.stop()
    """.stripMargin
+
+
+/// scaladoc
+scalacOptions in (Compile,doc) ++= Seq("-groups", "-implicits",
+  // NOTE: remember to change the JVM path that works on your system.
+  // Current setting should work for JDK7 on OSX and Linux (Ubuntu)
+  "-doc-external-doc:/Library/Java/JavaVirtualMachines/jdk1.7.0_60.jdk/Contents/Home/jre/lib/rt.jar#http://docs.oracle.com/javase/7/docs/api",
+  "-doc-external-doc:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar#http://docs.oracle.com/javase/7/docs/api"
+  )
+
+autoAPIMappings := true
+
